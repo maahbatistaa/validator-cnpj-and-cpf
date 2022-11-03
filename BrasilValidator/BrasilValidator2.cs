@@ -1,17 +1,17 @@
 ﻿namespace BrasilValidator
 {
-    internal class BrasilValidator
+    internal class BrasilValidator2
     {
         /// <summary>
         /// Verifica se o CPF é válido
         /// </summary>
         /// <param name="cpf">Digitos de um cpf</param>
         /// <returns>true of false</returns>
-        public static bool EhCpfValido(string cpf )
+        public static bool EhCpfValido(string cpf)
         {
             int soma = 0;
             int resultado = 0;
-            
+
             if (string.IsNullOrWhiteSpace(cpf))
             {
                 return false;
@@ -22,31 +22,33 @@
                      .Replace("-", "")
                      .Replace(",", "")
                      .Replace(" ", "")
-                     .Trim(); 
+                     .Trim();
 
-            if (cpf.Length != 11)
+            //Verifica se os caracteres são iguais 
+            bool igual = true;
+            for (int i = 1; i < cpf.Length && igual; i++)
+            {
+                if (cpf[i] != cpf[0])
+                {
+                    igual = false;
+                }
+            }
+
+            if (igual || cpf == "12345678909")
             {
                 return false;
             }
-
-            //Confere se não são caracteres iguais
-            else if (cpf[0] == cpf[1] && cpf[1] == cpf[2] && cpf[2] == cpf[3] && 
-                     cpf[3] == cpf[4] && cpf[4] == cpf[5] && cpf[5] == cpf[6] &&
-                     cpf[6] == cpf[7] && cpf[7] == cpf[8] && cpf[8] == cpf[9])
+            else if (cpf.Length != 11)
             {
                 return false;
             }
             else
             {
-                int[] multi1 = { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
-                int[] multi2 = { 11, 10, 9, 8, 7, 6, 5, 4, 3, 2 };
-
                 //Faz o calculo do primeiro digito
-                for (int i = 0; i < 9; i++)
+                for (int i = 0, j = 10; i < 9; i++, j--)
                 {
-                    soma += int.Parse(cpf[i].ToString()) * multi1[i];
+                    soma += int.Parse(cpf[i].ToString()) * j;
                 }
-
                 resultado = (soma * 10) % 11;
 
                 //Verifica se o resto da divisão é igual a 10, e retorna 0
@@ -56,11 +58,10 @@
                 if (Convert.ToString(resultado) == Convert.ToString(cpf[9]))
                 {
                     soma = 0;
-
                     //faz o calculo do segundo digito
-                    for (int i = 0; i < 10; i++)
+                    for (int i = 0, j = 11; i < 10; i++, j--)
                     {
-                        soma += int.Parse(cpf[i].ToString()) * multi2[i];
+                        soma += int.Parse(cpf[i].ToString()) * j;
                     }
                     resultado = (soma * 10) % 11;
 
@@ -68,9 +69,9 @@
                     if (resultado == 10) { resultado = 0; }
 
                     //Faz a comparação do resultado com o segundo digito
-                    if (Convert.ToString(resultado) == Convert.ToString(cpf[10])) 
+                    if (Convert.ToString(resultado) == Convert.ToString(cpf[10]))
                     {
-                       return true;
+                        return true;
                     }
                     else
                     {
@@ -94,8 +95,6 @@
         {
             int soma = 0;
             int resultado = 0;
-            int[] multi1 = { 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
-            int[] multi2 = { 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
 
             if (string.IsNullOrWhiteSpace(cnpj))
             {
@@ -110,26 +109,34 @@
                        .Replace("/", "")
                        .Trim();
 
-            //Verifica se caracteres são iguais 
-            if (cnpj[0] == cnpj[1] && cnpj[1] == cnpj[2] && cnpj[2] == cnpj[3] && 
-                cnpj[3] == cnpj[4] && cnpj[4] == cnpj[5] && cnpj[5] == cnpj[6] &&
-                cnpj[6] == cnpj[7] && cnpj[7] == cnpj[8] && cnpj[8] == cnpj[9] &&
-                cnpj[9] == cnpj[10] && cnpj[10] == cnpj[11] && cnpj[11] == cnpj[12])
+            //Verifica se os caracteres são iguais 
+            bool igual = true;
+            for (int i = 1; i < cnpj.Length && igual; i++)
+            {
+                if (cnpj[i] != cnpj[0])
+                {
+                    igual = false;
+                }
+            }
+
+            if (igual || cnpj == "12345678901234")
             {
                 return false;
             }
-
             else if (cnpj.Length != 14)
             {
                 return false;
             }
-
             else
             {
                 //Faz o calculo do primeiro digito
-                for (int i = 0; i < 12; i++)
+                for (int i = 0, j = 5; i < 4; i++, j--)
                 {
-                    soma += int.Parse(cnpj[i].ToString()) * multi1[i];
+                    soma += int.Parse(cnpj[i].ToString()) * j;
+                }
+                for (int i = 4, j = 9; i < 12; i++, j--)
+                {
+                    soma += int.Parse(cnpj[i].ToString()) * j;
                 }
 
                 resultado = soma % 11;
@@ -150,10 +157,15 @@
                     soma = 0;
 
                     //faz o calculo do segundo digito
-                    for (int i = 0; i < 13; i++)
+                    for (int i = 0, j = 6; i < 5; i++, j--)
                     {
-                        soma += int.Parse(cnpj[i].ToString()) * multi2[i];
+                        soma += int.Parse(cnpj[i].ToString()) * j;
                     }
+                    for (int i = 5, j = 9; i < 13; i++, j--)
+                    {
+                        soma += int.Parse(cnpj[i].ToString()) * j;
+                    }
+
                     resultado = soma % 11;
 
                     //Verifica se o resto da divisão é 1 ou 0, e retorna 0
